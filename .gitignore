@@ -1,0 +1,14 @@
+﻿# Datos gestionados por DVC
+data/*.csv
+data/*.zip
+
+# Archivos temporales de Python y Jupyter
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+
+# Entornos y archivos locales
+.venv/
+venv/
+.env
+*.log
