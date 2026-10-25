@@ -1,7 +1,8 @@
-﻿pandas
+pandas
 numpy
 matplotlib
 scikit-learn
 jupyter
 requests
-dvc
+dvc[gdrive]
+scipy
