@@ -1,0 +1,9 @@
+﻿variable,cardinality,total_records,rare_categories,unknown_records,missing_records
+contact,3,45211,0,13020,0
+default,2,45211,0,0,0
+education,4,45211,0,1857,0
+housing,2,45211,0,0,0
+job,12,45211,1,288,0
+loan,2,45211,0,0,0
+marital,3,45211,0,0,0
+poutcome,4,45211,0,36959,0

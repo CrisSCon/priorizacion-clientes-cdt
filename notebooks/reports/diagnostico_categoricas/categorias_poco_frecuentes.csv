@@ -1,0 +1,2 @@
+﻿variable,category,total,yes_count,no_count,percentage,yes_rate,no_rate,is_unknown,is_missing,is_rare,rate_reliable_sample,rate_interpretation
+job,unknown,288,34,254,0.6370131162770122,11.805555555555555,88.19444444444444,True,False,True,True,Tasa intermedia

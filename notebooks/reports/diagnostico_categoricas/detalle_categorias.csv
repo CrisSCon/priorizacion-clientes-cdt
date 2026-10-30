@@ -1,0 +1,33 @@
+﻿variable,category,total,yes_count,no_count,percentage,yes_rate,no_rate,is_unknown,is_missing,is_rare,rate_reliable_sample,rate_interpretation
+contact,cellular,29285,4369,24916,64.77405941032049,14.918900460986853,85.08109953901315,False,False,False,True,Tasa intermedia
+contact,unknown,13020,530,12490,28.798301298356595,4.070660522273426,95.92933947772657,True,False,False,True,Tasa positiva relativamente baja
+contact,telephone,2906,390,2516,6.427639291322908,13.420509291121817,86.57949070887818,False,False,False,True,Tasa intermedia
+default,no,44396,5237,39159,98.19734135497998,11.796107757455626,88.20389224254437,False,False,False,True,Tasa intermedia
+default,yes,815,52,763,1.8026586450200173,6.38036809815951,93.61963190184049,False,False,False,True,Tasa positiva relativamente baja
+education,secondary,23202,2450,20752,51.3193691800668,10.559434531505904,89.4405654684941,False,False,False,True,Tasa intermedia
+education,tertiary,13301,1996,11305,29.419831456946316,15.006390496955117,84.9936095030449,False,False,False,True,Tasa intermedia
+education,primary,6851,591,6260,15.153391873659064,8.626477886439936,91.37352211356007,False,False,False,True,Tasa positiva relativamente baja
+education,unknown,1857,252,1605,4.1074074893278185,13.5702746365105,86.4297253634895,True,False,False,True,Tasa intermedia
+housing,yes,25130,1935,23195,55.583818097365686,7.699960206923995,92.30003979307601,False,False,False,True,Tasa positiva relativamente baja
+housing,no,20081,3354,16727,44.416181902634314,16.70235546038544,83.29764453961455,False,False,False,True,Tasa intermedia
+job,blue-collar,9732,708,9024,21.525734887527374,7.274969173859433,92.72503082614057,False,False,False,True,Tasa positiva relativamente baja
+job,management,9458,1301,8157,20.919687686624936,13.755550856417848,86.24444914358216,False,False,False,True,Tasa intermedia
+job,technician,7597,840,6757,16.80343279290438,11.056996182703699,88.9430038172963,False,False,False,True,Tasa intermedia
+job,admin.,5171,631,4540,11.437482028709828,12.202668729452718,87.79733127054729,False,False,False,True,Tasa intermedia
+job,services,4154,369,3785,9.188029461856628,8.883004333172845,91.11699566682715,False,False,False,True,Tasa positiva relativamente baja
+job,retired,2264,516,1748,5.0076308862887355,22.791519434628977,77.20848056537103,False,False,False,True,Tasa positiva relativamente alta
+job,self-employed,1579,187,1392,3.4925128840326467,11.842938568714375,88.15706143128563,False,False,False,True,Tasa intermedia
+job,entrepreneur,1487,123,1364,3.289022582999712,8.271687962340282,91.72831203765972,False,False,False,True,Tasa positiva relativamente baja
+job,unemployed,1303,202,1101,2.8820419809338436,15.502686108979278,84.49731389102072,False,False,False,True,Tasa intermedia
+job,housemaid,1240,109,1131,2.7426953617482472,8.790322580645162,91.20967741935485,False,False,False,True,Tasa positiva relativamente baja
+job,student,938,269,669,2.074716330096658,28.678038379530918,71.32196162046908,False,False,False,True,Tasa positiva relativamente alta
+job,unknown,288,34,254,0.6370131162770122,11.805555555555555,88.19444444444444,True,False,True,True,Tasa intermedia
+loan,no,37967,4805,33162,83.9773506447546,12.655727342165566,87.34427265783444,False,False,False,True,Tasa intermedia
+loan,yes,7244,484,6760,16.022649355245406,6.681391496410822,93.31860850358918,False,False,False,True,Tasa positiva relativamente baja
+marital,married,27214,2755,24459,60.193315785981284,10.123465863158668,89.87653413684133,False,False,False,True,Tasa intermedia
+marital,single,12790,1912,10878,28.28957554577426,14.94917904612979,85.05082095387021,False,False,False,True,Tasa intermedia
+marital,divorced,5207,622,4585,11.517108668244454,11.945458037257538,88.05454196274246,False,False,False,True,Tasa intermedia
+poutcome,unknown,36959,3386,33573,81.74780473778506,9.161503287426607,90.83849671257339,True,False,False,True,Tasa positiva relativamente baja
+poutcome,failure,4901,618,4283,10.840282232200128,12.609671495613139,87.39032850438686,False,False,False,True,Tasa intermedia
+poutcome,other,1840,307,1533,4.06980602065869,16.684782608695652,83.31521739130436,False,False,False,True,Tasa intermedia
+poutcome,success,1511,978,533,3.34210700935613,64.72534745201854,35.27465254798147,False,False,False,True,Tasa positiva relativamente alta

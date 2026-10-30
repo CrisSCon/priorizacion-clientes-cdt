@@ -1,0 +1,5 @@
+﻿variable,category,total,yes_count,no_count,percentage,yes_rate,no_rate,is_unknown,is_missing,is_rare,rate_reliable_sample,rate_interpretation
+contact,unknown,13020,530,12490,28.798301298356595,4.070660522273426,95.92933947772657,True,False,False,True,Tasa positiva relativamente baja
+education,unknown,1857,252,1605,4.1074074893278185,13.5702746365105,86.4297253634895,True,False,False,True,Tasa intermedia
+job,unknown,288,34,254,0.6370131162770122,11.805555555555555,88.19444444444444,True,False,True,True,Tasa intermedia
+poutcome,unknown,36959,3386,33573,81.74780473778506,9.161503287426607,90.83849671257339,True,False,False,True,Tasa positiva relativamente baja
