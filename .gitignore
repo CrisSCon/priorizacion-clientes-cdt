@@ -20,3 +20,6 @@ mlflow.db
 mlruns/
 notebooks/mlflow.db
 notebooks/mlruns/
+
+# Modelos entrenados serializados
+models/*.pkl

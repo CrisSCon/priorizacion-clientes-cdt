@@ -1,0 +1,13 @@
+{
+    "scikit_learn": "1.9.1",
+    "mlflow": "3.18.0",
+    "formato": "pickle (.pkl)",
+    "modelos": [
+        "regresion_logistica_sin_balanceo",
+        "regresion_logistica_balanceada",
+        "random_forest_sin_balanceo",
+        "random_forest_balanceado",
+        "gradient_boosting_base",
+        "gradient_boosting_final"
+    ]
+}
