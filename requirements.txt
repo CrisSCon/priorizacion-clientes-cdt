@@ -6,3 +6,4 @@ jupyter
 requests
 dvc[gdrive]
 scipy
+mlflow==3.18.0

@@ -14,3 +14,9 @@ venv/
 *.log
 
 .venv-dvc/
+
+# MLflow local
+mlflow.db
+mlruns/
+notebooks/mlflow.db
+notebooks/mlruns/
