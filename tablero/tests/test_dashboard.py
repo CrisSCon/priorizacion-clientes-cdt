@@ -56,6 +56,22 @@ def test_pages_are_available(app: Dash, route: str) -> None:
     assert app.server.test_client().get(route).status_code == 200
 
 
+def test_sample_button_loads_the_larger_customer_list(app: Dash) -> None:
+    """Trying sample data populates a full list rather than the short template."""
+    result = callback_request(
+        app,
+        "..batch-data",
+        [
+            {"id": "csv-upload", "property": "contents", "value": None},
+            {"id": "sample-data", "property": "n_clicks", "value": 1},
+        ],
+        [{"id": "csv-upload", "property": "filename", "value": None}],
+        changed="sample-data.n_clicks",
+    )
+    assert len(result["batch-data"]["data"]) == 120
+    assert "120 of 120 rows processed" in result["upload-message"]["children"]
+
+
 def test_download_is_a_valid_csv_attachment(app: Dash) -> None:
     """The main-page download produces a file that the scoring service accepts."""
     response = app.server.test_client().get("/download/template.csv")

@@ -5,6 +5,7 @@ import binascii
 import csv
 import io
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any, Sequence
 
 from tablero import api
@@ -18,6 +19,11 @@ from tablero.schema import (
 
 MAX_BYTES = 5 * 1024 * 1024
 MAX_ROWS = 10000
+
+
+def sample_csv() -> str:
+    """Load 120 fictional customer profiles for exploring batch results."""
+    return Path(__file__).with_name("sample_customers.csv").read_text(encoding="utf-8")
 
 
 def template_csv() -> str:

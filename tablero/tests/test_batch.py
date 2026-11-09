@@ -35,6 +35,20 @@ def test_template_can_be_uploaded_and_scored() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "source,count", [(batch.template_csv, 3), (batch.sample_csv, 120)]
+)
+def test_example_files_contain_valid_varied_customers(source: Any, count: int) -> None:
+    """Templates and sample lists score every row and contain both decisions."""
+    rows = batch.process_csv(source())
+    summary = batch.summarize(rows)
+    assert summary["processed"] == count
+    assert summary["errors"] == 0
+    assert summary["yes"] > 0
+    assert summary["no"] > 0
+    assert len({row["name"] for row in rows}) == count
+
+
 def test_invalid_rows_do_not_prevent_other_predictions() -> None:
     """A mixed file keeps errors visible while scoring its valid customers."""
     text = make_csv(

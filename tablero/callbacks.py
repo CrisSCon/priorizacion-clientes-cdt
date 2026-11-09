@@ -65,7 +65,7 @@ def register_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def reset_profile(clicks: int, ids: list[dict[str, str]]) -> list[Any]:
-        """Restore every visible and advanced predictor to its documented default."""
+        """Restore every predictor to its documented default."""
         return [DEFAULT_PROFILE[identifier["key"]] for identifier in ids]
 
     @app.callback(
@@ -83,7 +83,7 @@ def register_callbacks(app: Dash) -> None:
         """Process a complete upload atomically and remove stale data on failure."""
         try:
             if ctx.triggered_id == "sample-data":
-                text, label = batch.template_csv(), "Sample data"
+                text, label = batch.sample_csv(), "Sample data · 120 customers"
             elif contents:
                 text, label = batch.decode_upload(contents, filename), filename
             else:
