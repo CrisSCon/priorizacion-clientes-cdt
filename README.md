@@ -33,7 +33,7 @@ Reiniciar el kernel y ejecutar todas las celdas. Se comprueban integridad, dimen
 
 ## Local dashboard
 
-The English-language Dash dashboard in [`tablero/`](tablero/README.md) uses only
+The Dash dashboard in [`tablero/`](tablero/README.md) uses only
 `models/gradient_boosting_final.pkl`. It supports manual profiles with live
 probabilities and CSV uploads with validation, filtering, ranking, and row details.
 
