@@ -1,4 +1,4 @@
-"""Plotly presentation of scored customer populations."""
+"""Prediction charts."""
 
 from typing import Any, Sequence
 
@@ -10,11 +10,7 @@ RED = "#bd5853"
 
 
 def probability_distribution(rows: Sequence[dict[str, Any]]) -> go.Figure:
-    """Plot customer counts in fixed 10% bands with an explicit 50% cutoff.
-
-    Error rows are excluded. Fixed bins make successive uploads comparable;
-    zero and one are included in the first and last bins respectively.
-    """
+    """Plot valid predictions in 10% bands with a 50% cutoff."""
     probabilities = [
         row["probability_yes"] for row in rows if row["probability_yes"] is not None
     ]

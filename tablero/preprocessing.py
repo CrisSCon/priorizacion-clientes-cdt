@@ -1,9 +1,4 @@
-"""Reproduce notebook 01's features using frozen training-only statistics.
-
-The final pickle contains only a classifier. These transformations reproduce
-the notebook's numeric features and one-hot encoding without fitting anything
-at inference time. See preprocessing.json for training statistics and feature order.
-"""
+"""Prepare model inputs using saved training statistics."""
 
 import json
 from pathlib import Path
@@ -20,12 +15,7 @@ METADATA = json.loads(
 
 
 def engineer_profile(profile: Mapping[str, Any]) -> dict[str, float]:
-    """Expand a validated customer profile into the 94 trained predictors.
-
-    For a never-contacted customer, recency flags remain false, the category
-    is ``missing``, and numeric recency uses the frozen training median.
-    Derived inputs are computed together to avoid inconsistent manual flags.
-    """
+    """Convert a validated profile into the 94 model features."""
     p = validate_profile(profile)
     age, balance = float(p["age"]), float(p["balance"])
     previous, pdays = float(p["previous"]), float(p["pdays"])
@@ -135,12 +125,12 @@ def engineer_profile(profile: Mapping[str, Any]) -> dict[str, float]:
 
 
 def band(value: float, bounds: Sequence[float], labels: Sequence[str]) -> str:
-    """Return a right-inclusive band, matching pandas.cut in the notebook."""
+    """Return the band containing the value, including its upper bound."""
     return labels[int(np.searchsorted(bounds, value, side="left"))]
 
 
 def prepare_features(profiles: Sequence[Mapping[str, Any]]) -> pd.DataFrame:
-    """Return finite predictors in the exact order expected by the classifier."""
+    """Build the feature table in model input order."""
     return pd.DataFrame(
         [engineer_profile(profile) for profile in profiles],
         columns=METADATA["feature_names"],

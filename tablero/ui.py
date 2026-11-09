@@ -1,4 +1,4 @@
-"""Dash layouts and presentational components, independent of inference."""
+"""Dashboard layouts and components."""
 
 import json
 from typing import Any
@@ -12,7 +12,7 @@ from tablero.schema import FIELDS, Field
 
 
 def loading_status(label: str) -> html.Div:
-    """Return an inline progress indicator that does not cover editable content."""
+    """Show a nonblocking loading indicator."""
     return html.Div(
         [html.Span(className="status-spinner", **{"aria-hidden": "true"}), label],
         className="loading-status",
@@ -22,7 +22,7 @@ def loading_status(label: str) -> html.Div:
 
 
 def field_control(field: Field) -> html.Div:
-    """Render a labeled source predictor with an explicit default and help text."""
+    """Render a field with its default value and help text."""
     identifier = {"type": "profile-field", "key": field.key}
     if field.choices:
         control = dcc.Dropdown(
@@ -65,7 +65,7 @@ def field_control(field: Field) -> html.Div:
 
 
 def prediction_card(result: Prediction | None, error: str = "") -> list[Any]:
-    """Render a complementary probability display or clear invalid-input state."""
+    """Show prediction probabilities or an input error."""
     if result is None:
         return [
             html.Div("PREDICTION", className="eyebrow"),
@@ -107,7 +107,7 @@ def prediction_card(result: Prediction | None, error: str = "") -> list[Any]:
 
 
 def home_page() -> html.Section:
-    """Build the landing page with two equal-access prediction workflows."""
+    """Build the workflow selection page."""
     return html.Section(
         [
             html.H1("Customer prioritization"),
@@ -170,7 +170,7 @@ def home_page() -> html.Section:
 
 
 def manual_page() -> html.Section:
-    """Show all source fields alongside a persistent, nonblocking estimate."""
+    """Show all profile fields and the prediction."""
     primary_order = (
         "poutcome",
         "previous",
@@ -254,7 +254,7 @@ def manual_page() -> html.Section:
 
 
 def results_grid() -> dag.AgGrid:
-    """Build a sortable, paginated customer table with accessible detail buttons."""
+    """Build the sortable customer table."""
     return dag.AgGrid(
         id="results-grid",
         rowData=[],
@@ -331,7 +331,7 @@ def results_grid() -> dag.AgGrid:
 
 
 def csv_page() -> html.Section:
-    """Build the upload, summary, chart, and searchable customer results view."""
+    """Build the CSV upload and results page."""
     return html.Section(
         [
             html.Div("CUSTOMER LIST", className="eyebrow"),
@@ -581,7 +581,7 @@ def csv_page() -> html.Section:
 
 
 def summary_cards(summary: dict[str, int]) -> list[html.Div]:
-    """Present processed and rejected row counts separately from decisions."""
+    """Show row, prediction, and error counts."""
     return [
         html.Div(
             [
@@ -601,7 +601,7 @@ def summary_cards(summary: dict[str, int]) -> list[html.Div]:
 
 
 def row_details(row: dict[str, Any]) -> list[Any]:
-    """Display every original CSV value plus the result and any validation error."""
+    """Show a row, its prediction, and any errors."""
     probability = row["probability_yes"]
     return [
         html.Div("CUSTOMER DETAILS", className="eyebrow"),
@@ -640,7 +640,7 @@ def row_details(row: dict[str, Any]) -> list[Any]:
 
 
 def layout() -> html.Div:
-    """Compose persistent pages so navigation preserves profile and upload state."""
+    """Build the dashboard while preserving state between pages."""
     return html.Div(
         [
             dcc.Location(id="location", refresh=False),

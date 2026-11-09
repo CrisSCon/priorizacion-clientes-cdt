@@ -1,8 +1,4 @@
-"""In-process inference boundary; no HTTP API or remote calls are implemented.
-
-The UI calls these functions without accessing the model directly. Only the
-repository's trusted gradient_boosting_final.pkl artifact is ever loaded.
-"""
+"""Local predictions using the final Gradient Boosting model."""
 
 import pickle
 import warnings
@@ -22,12 +18,12 @@ THRESHOLD = 0.5
 
 
 class ModelUnavailableError(RuntimeError):
-    """Indicate that the selected artifact cannot safely serve predictions."""
+    """The model is missing or incompatible."""
 
 
 @dataclass(frozen=True)
 class Prediction:
-    """Represent complementary class probabilities and the 50% decision."""
+    """Class probabilities and the yes/no prediction."""
 
     probability_yes: float
     probability_no: float
@@ -35,7 +31,7 @@ class Prediction:
 
 
 def classify_probability(probability_yes: float) -> Prediction:
-    """Classify a finite probability, treating exactly 50% as yes."""
+    """Predict yes for probabilities of 50% or higher."""
     if not np.isfinite(probability_yes) or not 0 <= probability_yes <= 1:
         raise ValueError("Probability must be finite and between zero and one.")
     return Prediction(
@@ -47,11 +43,7 @@ def classify_probability(probability_yes: float) -> Prediction:
 
 @lru_cache(maxsize=1)
 def load_model() -> GradientBoostingClassifier:
-    """Load and check the single supported artifact once per process.
-
-    Missing DVC artifacts and incompatible scikit-learn versions produce an
-    actionable message. A different feature contract is never guessed.
-    """
+    """Load, validate, and cache the final model."""
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("error", InconsistentVersionWarning)
@@ -77,7 +69,7 @@ def load_model() -> GradientBoostingClassifier:
 
 
 def predict_many(profiles: Sequence[Mapping[str, Any]]) -> list[Prediction]:
-    """Validate and score profiles in one local model call, preserving order."""
+    """Validate and score profiles in input order."""
     if not profiles:
         return []
     features = prepare_features(profiles)
@@ -86,5 +78,5 @@ def predict_many(profiles: Sequence[Mapping[str, Any]]) -> list[Prediction]:
 
 
 def predict_one(profile: Mapping[str, Any]) -> Prediction:
-    """Score one complete source profile using the same path as CSV scoring."""
+    """Validate and score one profile."""
     return predict_many([profile])[0]

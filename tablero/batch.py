@@ -1,4 +1,4 @@
-"""Strict CSV ingestion, row-level validation, scoring, and result queries."""
+"""CSV validation, predictions, and filtering."""
 
 import base64
 import binascii
@@ -22,12 +22,12 @@ MAX_ROWS = 10000
 
 
 def sample_csv() -> str:
-    """Load 120 fictional customer profiles for exploring batch results."""
+    """Load 120 fictional customer profiles."""
     return Path(__file__).with_name("sample_customers.csv").read_text(encoding="utf-8")
 
 
 def template_csv() -> str:
-    """Return a UTF-8 CSV template with three explicitly fictional profiles."""
+    """Return a CSV template with three example profiles."""
     stream = io.StringIO(newline="")
     writer = csv.DictWriter(stream, fieldnames=CSV_COLUMNS)
     writer.writeheader()
@@ -57,7 +57,7 @@ def template_csv() -> str:
 
 
 def decode_upload(contents: str, filename: str | None) -> str:
-    """Decode a Dash CSV upload, enforcing file type, size, and UTF-8 encoding."""
+    """Validate the upload and decode its UTF-8 content."""
     if not filename or not filename.lower().endswith(".csv"):
         raise ValidationError("Choose a .csv file using the downloaded template.")
     if len(contents) > MAX_BYTES * 4 // 3 + 1024:
@@ -77,12 +77,7 @@ def decode_upload(contents: str, filename: str | None) -> str:
 
 
 def process_csv(text: str) -> list[dict[str, Any]]:
-    """Score valid CSV rows and retain invalid rows with actionable errors.
-
-    The header must match the template, including order and case. File-level
-    structural errors reject the file. Value errors reject only their row.
-    A stable source-row ID preserves detail selection after sorting/filtering.
-    """
+    """Validate the CSV format, score valid rows, and retain row errors."""
     reader = csv.reader(io.StringIO(text.lstrip("\ufeff"), newline=""), strict=True)
     try:
         header = next(reader, [])
@@ -138,7 +133,7 @@ def process_csv(text: str) -> list[dict[str, Any]]:
 
 
 def summarize(rows: Sequence[dict[str, Any]]) -> dict[str, int]:
-    """Count all uploaded rows, successful predictions, and row errors."""
+    """Count rows, predictions, and errors."""
     yes = sum(row["prediction"] == "yes" for row in rows)
     no = sum(row["prediction"] == "no" for row in rows)
     return {
@@ -155,7 +150,7 @@ def filter_rows(
     name: str | None,
     prediction: str,
 ) -> list[dict[str, Any]]:
-    """Filter names case-insensitively and match the chosen prediction status."""
+    """Filter by name (case-insensitive) and prediction status."""
     query = (name or "").strip().casefold()
     return [
         row
@@ -166,5 +161,5 @@ def filter_rows(
 
 
 def find_row(rows: Sequence[dict[str, Any]], row_id: str) -> dict[str, Any] | None:
-    """Find a source row by stable ID independently of visible table order."""
+    """Find a row by its source ID."""
     return next((row for row in rows if row["id"] == row_id), None)

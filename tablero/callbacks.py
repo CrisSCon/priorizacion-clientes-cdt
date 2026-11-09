@@ -1,4 +1,4 @@
-"""Connect Dash interactions to the independent local inference services."""
+"""Dash navigation and prediction callbacks."""
 
 from typing import Any
 
@@ -11,7 +11,7 @@ from tablero.schema import DEFAULT_PROFILE, ValidationError
 
 
 def register_callbacks(app: Dash) -> None:
-    """Register navigation, debounced scoring, uploads, filters, and row details."""
+    """Register the dashboard callbacks."""
 
     @app.callback(
         Output("home-page", "style"),
@@ -23,7 +23,7 @@ def register_callbacks(app: Dash) -> None:
         Input("location", "pathname"),
     )
     def navigate(path: str | None) -> tuple[Any, ...]:
-        """Show one route, keeping other page inputs mounted and intact."""
+        """Switch pages while preserving inputs."""
         route = path if path in ("/manual", "/csv") else "/"
         routes = ("/", "/manual", "/csv")
         return tuple(
@@ -52,7 +52,7 @@ def register_callbacks(app: Dash) -> None:
 
     @app.callback(Output("manual-result", "children"), Input("profile-values", "data"))
     def score_profile(profile: dict[str, Any] | None) -> list[Any]:
-        """Replace the estimate on each settled edit, clearing it on invalid input."""
+        """Update the estimate or show validation errors."""
         try:
             return ui.prediction_card(api.predict_one(profile or DEFAULT_PROFILE))
         except (ValidationError, api.ModelUnavailableError) as exc:
@@ -65,7 +65,7 @@ def register_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def reset_profile(clicks: int, ids: list[dict[str, str]]) -> list[Any]:
-        """Restore every predictor to its documented default."""
+        """Restore the default profile."""
         return [DEFAULT_PROFILE[identifier["key"]] for identifier in ids]
 
     @app.callback(
@@ -80,7 +80,7 @@ def register_callbacks(app: Dash) -> None:
     def upload_csv(
         contents: str | None, clicks: int | None, filename: str | None
     ) -> tuple[Any, ...]:
-        """Process a complete upload atomically and remove stale data on failure."""
+        """Process an upload and clear stale results on failure."""
         try:
             if ctx.triggered_id == "sample-data":
                 text, label = batch.sample_csv(), "Sample data · 120 customers"
@@ -111,7 +111,7 @@ def register_callbacks(app: Dash) -> None:
         Input("batch-data", "data"),
     )
     def summarize_batch(rows: list[dict[str, Any]]) -> tuple[Any, ...]:
-        """Keep summary statistics and the chart tied to the full uploaded list."""
+        """Summarize all uploaded rows."""
         return (
             ui.summary_cards(batch.summarize(rows)),
             probability_distribution(rows),
@@ -129,7 +129,7 @@ def register_callbacks(app: Dash) -> None:
     def filter_customers(
         rows: list[dict[str, Any]], name: str | None, prediction: str
     ) -> tuple[Any, str]:
-        """Apply user-facing filters; AG Grid handles sorting and pagination."""
+        """Filter the customer table."""
         filtered = batch.filter_rows(rows, name, prediction)
         return filtered, f"{len(filtered):,} of {len(rows):,} customers"
 
@@ -146,7 +146,7 @@ def register_callbacks(app: Dash) -> None:
         button: dict[str, Any] | None,
         rows: list[dict[str, Any]],
     ) -> tuple[Any, Any]:
-        """Resolve the selected source ID even after table sorting or filtering."""
+        """Show details for the selected row."""
         if ctx.triggered_id == "batch-data":
             return [], {"open": False}
         event = (

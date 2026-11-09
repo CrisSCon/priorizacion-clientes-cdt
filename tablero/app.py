@@ -1,4 +1,4 @@
-"""Launch the local Dash dashboard with ``python -m tablero.app``."""
+"""Run the dashboard with ``python -m tablero.app``."""
 
 from pathlib import Path
 
@@ -11,11 +11,7 @@ from tablero.ui import layout
 
 
 def create_app() -> Dash:
-    """Create the application and its local template download endpoint.
-
-    The Flask route serves only the CSV template. Inference remains an
-    in-process call; no prediction API is exposed. Uploads are not saved.
-    """
+    """Create the dashboard and CSV download route."""
     app = Dash(
         __name__,
         title="CDT · Customer prioritization",
@@ -28,7 +24,7 @@ def create_app() -> Dash:
 
     @app.server.get("/download/template.csv")
     def download_template() -> Response:
-        """Download the same valid sample format accepted by the batch workflow."""
+        """Download the CSV template."""
         return Response(
             template_csv(),
             mimetype="text/csv; charset=utf-8",

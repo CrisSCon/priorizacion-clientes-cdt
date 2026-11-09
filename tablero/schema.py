@@ -1,4 +1,4 @@
-"""Shared input contract for manual profiles and comma-separated uploads."""
+"""Profile fields, defaults, and validation."""
 
 from dataclasses import dataclass
 from math import isfinite
@@ -7,11 +7,7 @@ from typing import Any, Mapping
 
 @dataclass(frozen=True)
 class Field:
-    """Describe one source predictor, its default, and accepted values.
-
-    Numeric bounds are application input limits, not model confidence limits.
-    Categorical values retain the spelling used by the training notebooks.
-    """
+    """A profile field with defaults and validation limits."""
 
     key: str
     label: str
@@ -132,16 +128,11 @@ DEFAULT_PROFILE = {field.key: field.default for field in FIELDS}
 
 
 class ValidationError(ValueError):
-    """Report actionable errors in an input profile or uploaded file."""
+    """Invalid profile or CSV input."""
 
 
 def validate_profile(profile: Mapping[str, Any]) -> dict[str, str | float]:
-    """Validate all source predictors and return their canonical values.
-
-    Missing, extra, blank, nonfinite, and out-of-range values are rejected.
-    Category matching is strict; numeric CSV strings are accepted. Multiple
-    field errors are returned together so users can correct a row in one pass.
-    """
+    """Validate profile fields and convert numeric strings to numbers."""
     errors = []
     extra = set(profile) - set(FEATURE_KEYS)
     if extra:

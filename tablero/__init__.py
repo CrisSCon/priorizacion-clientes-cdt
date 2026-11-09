@@ -1,1 +1,1 @@
-"""Local customer prioritization dashboard and inference services."""
+"""Local customer prioritization dashboard."""

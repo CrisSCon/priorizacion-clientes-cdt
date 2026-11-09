@@ -1,4 +1,4 @@
-/** Accessible row-detail actions for the local customer grid. */
+// Customer row details.
 var dagcomponentfuncs = window.dashAgGridComponentFunctions =
     window.dashAgGridComponentFunctions || {};
 
