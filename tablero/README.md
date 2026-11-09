@@ -27,13 +27,14 @@ Keep scikit-learn at **1.9.1**, the version recorded with the trained artifact.
 ## Workflows
 
 - **Overview:** choose a workflow or download the sample CSV.
-- **Manual prediction:** seven prominent inputs reflect the model's feature
-  importance; four additional predictors are available in an expandable section.
+- **Manual prediction:** all eleven source predictors are visible in the form.
   Changes settle for 400 ms before scoring. Reset restores all eleven defaults.
   The probability card stays visible while scrolling, including on narrow screens.
   Invalid values clear the estimate and display the required correction.
-- **CSV predictions:** upload up to 5 MB / 10,000 data rows, or try three fictional
-  sample profiles. Search by name, filter yes/no/errors, sort column headings,
+  An inline spinner indicates updates while the previous estimate stays visible
+  and the form remains editable.
+- **CSV predictions:** upload up to 5 MB / 10,000 data rows, or load `sample_customers.csv`, a list of 120 fictional
+  customers. An inline spinner indicates CSV processing. Search by name, filter yes/no/errors, sort column headings,
   and open any row or its View button for full details. Escape or the close button
   dismisses the modal. Stable source IDs keep details correct after sorting.
 
@@ -126,6 +127,7 @@ fixtures before replacing it. No training or fitting happens at app startup.
 | `api.py` | In-process `predict_one` / `predict_many`; no HTTP prediction API |
 | `batch.py` | Strict upload parsing, row errors, summaries, filtering, stable lookup |
 | `figures.py` | Probability histogram |
+| `sample_customers.csv` | 120 fictional customers for the sample-data button |
 | `tests/` | Parameterized validation, inference parity, CSV and callback tests |
 
 The UI never opens the pickle or implements feature engineering. A future HTTP
@@ -146,7 +148,7 @@ all **9,043** held-out rows and probabilities to the original `X_test_final.csv`
 That full-partition check is skipped if optional notebook exports are absent.
 
 Browser checks should cover template download/upload, a mixed valid/invalid CSV,
-manual edits and reset, advanced fields, sticky estimates, filters, sorting,
+manual edits and reset, all eleven fields, sticky estimates, loading indicators, filters, sorting,
 row details, and a rejected replacement upload. Recheck both wide and narrow
 layouts after changing styles. The app uses Dash AG Grid's current theme API,
 as described in its [migration documentation](https://dash.plotly.com/dash-ag-grid/migration-guide).

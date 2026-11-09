@@ -10,10 +10,15 @@ from tablero.api import Prediction
 from tablero.figures import probability_distribution
 from tablero.schema import FIELDS, Field
 
-DISCLAIMER = (
-    "Estimated propensity to subscribe to a term deposit comparable to a CDT. "
-    "A prediction does not guarantee a subscription or replace commercial judgment."
-)
+
+def loading_status(label: str) -> html.Div:
+    """Return an inline progress indicator that does not cover editable content."""
+    return html.Div(
+        [html.Span(className="status-spinner", **{"aria-hidden": "true"}), label],
+        className="loading-status",
+        role="status",
+        **{"aria-live": "polite"},
+    )
 
 
 def field_control(field: Field) -> html.Div:
@@ -98,9 +103,6 @@ def prediction_card(result: Prediction | None, error: str = "") -> list[Any]:
             className="probability-labels",
         ),
         html.Div("Yes at 50% or above", className="cutoff-note"),
-        html.Hr(),
-        html.P("Updates as you change the profile.", className="small"),
-        html.P(DISCLAIMER, className="small muted"),
     ]
 
 
@@ -108,10 +110,9 @@ def home_page() -> html.Section:
     """Build the landing page with two equal-access prediction workflows."""
     return html.Section(
         [
-            html.Div("CONTACT PLANNING", className="eyebrow"),
             html.H1("Customer prioritization"),
             html.P(
-                "Estimate subscription propensity and review who to contact next.",
+                "Upload a CSV or enter a customer profile.",
                 className="page-intro",
             ),
             html.Div(
@@ -121,9 +122,7 @@ def home_page() -> html.Section:
                             html.Div("01 / CUSTOMER LIST", className="eyebrow"),
                             html.Div("↥", className="option-icon"),
                             html.H2("Upload a CSV"),
-                            html.P(
-                                "Score a list, compare probabilities, and inspect each customer."
-                            ),
+                            html.P("View predictions for multiple customers."),
                             html.Div(
                                 ["Open batch predictions", html.Span("↗")],
                                 className="card-action",
@@ -136,10 +135,8 @@ def home_page() -> html.Section:
                         [
                             html.Div("02 / SINGLE PROFILE", className="eyebrow"),
                             html.Div("⇄", className="option-icon"),
-                            html.H2("Explore one customer"),
-                            html.P(
-                                "Start with a sample profile and see how changes affect its estimate."
-                            ),
+                            html.H2("Manual prediction"),
+                            html.P("Enter customer values and view the probability."),
                             html.Div(
                                 ["Open manual prediction", html.Span("↗")],
                                 className="card-action",
@@ -155,10 +152,8 @@ def home_page() -> html.Section:
                 [
                     html.Div(
                         [
-                            html.Strong("Start with the right format"),
-                            html.P(
-                                "A CSV template with three fictional profiles and all required columns."
-                            ),
+                            html.Strong("CSV template"),
+                            html.P("Required columns and example rows."),
                         ]
                     ),
                     html.A(
@@ -169,41 +164,13 @@ def home_page() -> html.Section:
                 ],
                 className="template-strip",
             ),
-            html.Div(
-                [
-                    html.Div(
-                        [
-                            html.Div("MODEL", className="eyebrow"),
-                            html.Strong("Gradient Boosting · Final"),
-                        ]
-                    ),
-                    html.Div(
-                        [
-                            html.Div("DATA SOURCE", className="eyebrow"),
-                            html.Strong("UCI Bank Marketing"),
-                        ]
-                    ),
-                    html.Div(
-                        [
-                            html.Div("DECISION THRESHOLD", className="eyebrow"),
-                            html.Strong("50% subscription probability"),
-                        ]
-                    ),
-                ],
-                className="model-facts",
-            ),
-            html.P(
-                "Based on historical direct marketing campaigns at a Portuguese bank. "
-                + DISCLAIMER,
-                className="context-note",
-            ),
         ],
         id="home-page",
     )
 
 
 def manual_page() -> html.Section:
-    """Build the editable form with advanced inputs and a persistent estimate."""
+    """Show all source fields alongside a persistent, nonblocking estimate."""
     primary_order = (
         "poutcome",
         "previous",
@@ -212,6 +179,10 @@ def manual_page() -> html.Section:
         "balance",
         "housing",
         "loan",
+        "job",
+        "marital",
+        "education",
+        "default",
     )
     by_key = {field.key: field for field in FIELDS}
     return html.Section(
@@ -219,7 +190,7 @@ def manual_page() -> html.Section:
             html.Div("SINGLE PROFILE", className="eyebrow"),
             html.H1("Manual prediction"),
             html.P(
-                "Adjust the customer profile to explore the subscription estimate.",
+                "Enter customer values. The prediction updates automatically.",
                 className="page-intro",
             ),
             html.Div(
@@ -231,10 +202,6 @@ def manual_page() -> html.Section:
                                     html.Div(
                                         [
                                             html.H2("Customer profile"),
-                                            html.P(
-                                                "Most influential inputs are shown first.",
-                                                className="muted small",
-                                            ),
                                         ]
                                     ),
                                     html.Button(
@@ -249,32 +216,32 @@ def manual_page() -> html.Section:
                                 [field_control(by_key[key]) for key in primary_order],
                                 className="form-grid",
                             ),
-                            html.Details(
-                                [
-                                    html.Summary(
-                                        "Additional profile details · 4 fields"
-                                    ),
-                                    html.Div(
-                                        [
-                                            field_control(field)
-                                            for field in FIELDS
-                                            if not field.primary
-                                        ],
-                                        className="form-grid advanced-fields",
-                                    ),
-                                ],
-                                className="advanced",
-                            ),
                         ],
                         className="panel profile-panel",
                     ),
                     html.Aside(
-                        dcc.Loading(
-                            html.Div(id="manual-result", **{"aria-live": "polite"}),
-                            type="circle",
-                            color="#103e38",
-                            delay_show=250,
-                        ),
+                        [
+                            dcc.Loading(
+                                [
+                                    html.Div(className="loading-space"),
+                                    dcc.Store(id="profile-values"),
+                                    html.Div(
+                                        id="manual-result", **{"aria-live": "polite"}
+                                    ),
+                                ],
+                                id="manual-loading",
+                                custom_spinner=loading_status("Updating…"),
+                                delay_show=0,
+                                delay_hide=150,
+                                target_components={
+                                    "profile-values": "data",
+                                    "manual-result": "children",
+                                },
+                                parent_className="prediction-loading",
+                                overlay_style={"visibility": "visible"},
+                                show_initially=False,
+                            ),
+                        ],
                         className="panel prediction-panel",
                     ),
                 ],
@@ -374,7 +341,7 @@ def csv_page() -> html.Section:
                         [
                             html.H1("CSV predictions"),
                             html.P(
-                                "Upload a customer list to compare subscription estimates.",
+                                "Upload a CSV to view customer predictions.",
                                 className="page-intro",
                             ),
                         ]
@@ -476,12 +443,19 @@ def csv_page() -> html.Section:
                 className="panel upload-panel",
             ),
             dcc.Loading(
-                html.Div(
-                    id="upload-message", role="status", className="upload-message"
-                ),
-                type="circle",
-                color="#103e38",
+                [
+                    html.Div(className="loading-space"),
+                    dcc.Store(id="batch-data", data=[]),
+                ],
+                id="batch-loading",
+                custom_spinner=loading_status("Processing CSV…"),
+                target_components={"batch-data": "data"},
+                delay_show=0,
+                delay_hide=150,
+                parent_className="batch-progress",
+                show_initially=False,
             ),
+            html.Div(id="upload-message", role="status", className="upload-message"),
             html.Div(
                 [
                     html.Div(id="batch-summary", className="stats-grid"),
@@ -670,8 +644,6 @@ def layout() -> html.Div:
     return html.Div(
         [
             dcc.Location(id="location", refresh=False),
-            dcc.Store(id="profile-values"),
-            dcc.Store(id="batch-data", data=[]),
             dcc.Store(id="modal-event"),
             html.Div(id="modal-sync", hidden=True),
             html.A("Skip to content", href="#main-content", className="skip-link"),
@@ -698,21 +670,11 @@ def layout() -> html.Div:
                             ],
                             **{"aria-label": "Main navigation"},
                         ),
-                        html.Span(
-                            [html.Span(className="status-dot"), "Local workspace"],
-                            className="local-badge",
-                        ),
                     ],
                     className="header-inner",
                 )
             ),
             html.Main([home_page(), manual_page(), csv_page()], id="main-content"),
-            html.Footer(
-                [
-                    html.Span("CDT / Customer prioritization"),
-                    html.Span("Gradient Boosting · 50% decision threshold"),
-                ]
-            ),
             html.Dialog(
                 [
                     html.Button(
