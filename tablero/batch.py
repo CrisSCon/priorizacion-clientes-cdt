@@ -3,8 +3,8 @@
 import base64
 import binascii
 import csv
-from dataclasses import asdict
 import io
+from dataclasses import asdict
 from typing import Any, Sequence
 
 from tablero import api
@@ -96,9 +96,9 @@ def process_csv(text: str) -> list[dict[str, Any]]:
                 "id": str(index + 1),
                 "row": index + 2,
                 "name": original.get("name", ""),
-                "age": original.get("age", ""),
+                "age": None,
                 "job": original.get("job", ""),
-                "balance": original.get("balance", ""),
+                "balance": None,
                 "prediction": "error",
                 "probability_yes": None,
                 "probability_no": None,

@@ -4,12 +4,12 @@ The UI calls these functions without accessing the model directly. Only the
 repository's trusted gradient_boosting_final.pkl artifact is ever loaded.
 """
 
+import pickle
+import warnings
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-import pickle
 from typing import Any, Mapping, Sequence
-import warnings
 
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier

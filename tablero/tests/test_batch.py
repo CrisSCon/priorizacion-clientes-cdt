@@ -47,6 +47,7 @@ def test_invalid_rows_do_not_prevent_other_predictions() -> None:
     assert batch.summarize(rows)["processed"] == 1
     assert batch.summarize(rows)["errors"] == 1
     assert rows[1]["probability_yes"] is None
+    assert rows[1]["age"] is None
     assert "Age must be a number" in rows[1]["error"]
     assert rows[1]["original"]["age"] == "bad"
 
