@@ -20,3 +20,9 @@ mlflow.db
 mlruns/
 notebooks/mlflow.db
 notebooks/mlruns/
+
+# Dashboard development
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
