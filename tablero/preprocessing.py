@@ -2,7 +2,7 @@
 
 The final pickle contains only a classifier. These transformations reproduce
 the notebook's numeric features and one-hot encoding without fitting anything
-at inference time. See preprocessing.json for provenance and feature order.
+at inference time. See preprocessing.json for training statistics and feature order.
 """
 
 import json

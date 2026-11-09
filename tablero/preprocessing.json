@@ -1,7 +1,4 @@
 {
-  "source_notebook": "notebooks/01_eda_bank_marketing.ipynb, cell 33",
-  "training_export": "notebooks/data/processed/X_train_final.csv",
-  "model_dvc_md5": "5982cc4f662b01608838700d0d7f7553",
   "balance_median": 451.0,
   "recency_median": 195.0,
   "recency_log_median": 5.278114659230517,
