@@ -8,7 +8,7 @@
     "validacion": "StratifiedGroupKFold",
     "n_splits": 5,
     "mlflow_experiment": "bank-marketing-modelamiento-integral",
-    "mlflow_run_id": "ea71e5e5cef64012b7b628c8424529c1",
+    "mlflow_run_id": "7b12e3e3c14247e68c3eede0ee5f9389",
     "nota_test": "El conjunto test tuvo exposicion historica en evaluaciones previas; no se considera completamente inedito.",
     "nota_despliegue": "El modelo se entrenó con matrices ya transformadas. Para inferencia desde datos crudos se debe integrar el preprocesamiento del EDA y respetar exactamente las 94/95 columnas y su orden."
 }
