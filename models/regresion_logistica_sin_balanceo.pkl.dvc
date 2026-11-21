@@ -1,0 +1,5 @@
+outs:
+- md5: 51ffcdb7868622a1b2e4abea984b477f
+  size: 6618
+  hash: md5
+  path: regresion_logistica_sin_balanceo.pkl

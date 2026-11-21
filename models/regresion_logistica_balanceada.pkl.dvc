@@ -1,0 +1,5 @@
+outs:
+- md5: 3107b8cd86683f66d48957e36dc6864a
+  size: 6628
+  hash: md5
+  path: regresion_logistica_balanceada.pkl

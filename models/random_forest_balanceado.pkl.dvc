@@ -1,0 +1,5 @@
+outs:
+- md5: d731d90b514fb59a70cb1d8e4587b237
+  size: 138948560
+  hash: md5
+  path: random_forest_balanceado.pkl
