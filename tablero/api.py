@@ -1,4 +1,4 @@
-"""Dashboard adapter for the final XGBoost inference engine."""
+"""Connect dashboard predictions to the final XGBoost inference engine."""
 
 from dataclasses import dataclass
 from functools import lru_cache

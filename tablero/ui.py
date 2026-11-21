@@ -1,4 +1,4 @@
-"""Dashboard layouts and components."""
+"""Dashboard pages and components."""
 
 import json
 from typing import Any
