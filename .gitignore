@@ -20,3 +20,5 @@ mlflow.db
 mlruns/
 notebooks/mlflow.db
 notebooks/mlruns/
+# Artefactos locales de MLflow
+mlartifacts/
