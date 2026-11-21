@@ -102,7 +102,7 @@ def prediction_card(result: Prediction | None, error: str = "") -> list[Any]:
             ],
             className="probability-labels",
         ),
-        html.Div("Yes at 50% or above", className="cutoff-note"),
+        html.Div("Yes at 20% or above", className="cutoff-note"),
     ]
 
 
@@ -280,6 +280,13 @@ def results_grid() -> dag.AgGrid:
                 "valueFormatter": {
                     "function": "params.value == null ? '—' : params.value"
                 },
+            },
+            {
+                "field": "rank",
+                "headerName": "Priority rank",
+                "minWidth": 115,
+                "sort": "asc",
+                "cellDataType": "number",
             },
             {
                 "field": "prediction",
@@ -533,11 +540,11 @@ def csv_page() -> html.Section:
                                                         "value": "all",
                                                     },
                                                     {
-                                                        "label": "Yes · 50% or above",
+                                                        "label": "Yes · 20% or above",
                                                         "value": "yes",
                                                     },
                                                     {
-                                                        "label": "No · below 50%",
+                                                        "label": "No · below 20%",
                                                         "value": "no",
                                                     },
                                                     {
@@ -607,6 +614,10 @@ def row_details(row: dict[str, Any]) -> list[Any]:
         html.Div("CUSTOMER DETAILS", className="eyebrow"),
         html.H2(row["name"] or "Unnamed customer", id="detail-title"),
         html.P(f"CSV row {row['row']}", className="muted small"),
+        html.P(
+            f"Priority rank #{row['rank']}",
+            className="muted small",
+        ) if row.get("rank") is not None else None,
         html.Div(
             [
                 html.Span(

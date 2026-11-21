@@ -1,4 +1,5 @@
-﻿# Datos gestionados por DVC
+
+# Datos gestionados por DVC
 data/*.csv
 data/*.zip
 
@@ -20,9 +21,11 @@ mlflow.db
 mlruns/
 notebooks/mlflow.db
 notebooks/mlruns/
+mlartifacts/
 
 # Dashboard development
 .pytest_cache/
 .ruff_cache/
 .coverage
 htmlcov/
+

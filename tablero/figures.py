@@ -10,7 +10,7 @@ RED = "#bd5853"
 
 
 def probability_distribution(rows: Sequence[dict[str, Any]]) -> go.Figure:
-    """Plot valid predictions in 10% bands with a 50% cutoff."""
+    """Plot valid predictions in 10% bands with a 20% classification threshold."""
     probabilities = [
         row["probability_yes"] for row in rows if row["probability_yes"] is not None
     ]
@@ -20,16 +20,16 @@ def probability_distribution(rows: Sequence[dict[str, Any]]) -> go.Figure:
             x=np.arange(5, 100, 10),
             y=counts.tolist(),
             width=8,
-            marker_color=[RED] * 5 + [GREEN] * 5,
+            marker_color=[RED] * 2 + [GREEN] * 8,
             customdata=[f"{n}–{n + 10}%" for n in range(0, 100, 10)],
             hovertemplate="%{customdata} probability<br>%{y} customers<extra></extra>",
         )
     )
     figure.add_vline(
-        x=50,
+        x=20,
         line_dash="dot",
         line_color="#103e38",
-        annotation_text="50% cutoff",
+        annotation_text="20% threshold",
         annotation_position="top right",
     )
     figure.update_layout(

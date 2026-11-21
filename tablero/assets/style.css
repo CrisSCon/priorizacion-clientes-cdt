@@ -89,7 +89,7 @@ summary { cursor: pointer; font-size: 12px; font-weight: 600; }
 .probability-track { display: flex; height: 10px; border-radius: 5px; position: relative; margin-top: 28px; background: #eee; }
 .bar-yes { background: var(--green); border-radius: 5px 0 0 5px; transition: width .25s; }
 .bar-no { background: var(--red); border-radius: 0 5px 5px 0; transition: width .25s; }
-.cutoff-marker { position: absolute; left: 50%; top: -3px; height: 16px; border-left: 2px solid #fff; box-shadow: 1px 0 #103e3855; }
+.cutoff-marker { position: absolute; left: 20%; top: -3px; height: 16px; border-left: 2px solid #fff; box-shadow: 1px 0 #103e3855; }
 .probability-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; font-weight: 600; }
 .yes-text { color: var(--green); }
 .no-text { color: #a64c48; }
