@@ -10,7 +10,7 @@ RED = "#bd5853"
 
 
 def probability_distribution(rows: Sequence[dict[str, Any]]) -> go.Figure:
-    """Plot valid predictions in 10% bands with a 20% classification threshold."""
+    """Plot subscription probabilities in 10% bands with a 20% threshold."""
     probabilities = [
         row["probability_yes"] for row in rows if row["probability_yes"] is not None
     ]

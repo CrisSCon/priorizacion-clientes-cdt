@@ -1,4 +1,4 @@
-# Local CDT dashboard
+# CDT dashboard
 
 A Dash/Plotly workspace for prioritizing potential term-deposit customers.
 The dashboard uses the final XGBoost model through the shared inference pipeline in `src/inference.py`.
