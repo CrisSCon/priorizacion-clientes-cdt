@@ -17,7 +17,7 @@ On macOS, install the XGBoost OpenMP prerequisite with `brew install libomp`. Th
 
 Open http://127.0.0.1:8050. Stop the server with `Ctrl+C`. No environment variables or external services are required by the application.
 
-The dashboard calls the installed [`model_pkg.inference`](../model_pkg/src/model_pkg/inference.py) module in the same Python process.
+The dashboard delegates to the [API prediction service](../api/app/service.py) in the same Python process. The adapter in `api.py` has TODOs for switching to the running HTTP API.
 
 ## Model
 
@@ -46,19 +46,19 @@ Uploads must be UTF-8 CSV (an optional BOM is accepted), no larger than 5 MiB an
 
 ## Docker
 
-Build from the repository root so Docker can access the wheel in `api/model_pkg/` and the dashboard:
+Build from the repository root so Docker can access the wheel, the prediction service, and the dashboard:
 
 ```bash
 docker build -f tablero/Dockerfile -t cdt-dashboard .
 docker run --rm -p 127.0.0.1:8050:8050 cdt-dashboard
 ```
 
-`Dockerfile.dockerignore` is the Dockerfile-specific ignore file for this build. The image installs the inference wheel and dashboard dependencies. It runs `tablero.wsgi:server` with Gunicorn on port 8050, one worker, four threads, and a 120-second timeout.
+`Dockerfile.dockerignore` is the Dockerfile-specific ignore file for this build. The image installs the inference wheel and dashboard dependencies and copies the prediction service for in-process use. It runs `tablero.wsgi:server` with Gunicorn on port 8050, one worker, four threads, and a 120-second timeout.
 
 To run a prediction inside the image:
 
 ```bash
-docker run --rm cdt-dashboard python -c "import pandas as pd; from model_pkg.inference import predict_dataframe; print(predict_dataframe(pd.read_csv('tablero/sample_customers.csv')).head())"
+docker run --rm cdt-dashboard python -c "from tablero.api import predict_one; from tablero.schema import DEFAULT_PROFILE; print(predict_one(DEFAULT_PROFILE))"
 ```
 
 ## Modules
@@ -69,9 +69,9 @@ docker run --rm cdt-dashboard python -c "import pandas as pd; from model_pkg.inf
 | `wsgi.py` | Gunicorn entry point |
 | `ui.py`, `assets/` | Layout, styles, and browser interactions |
 | `callbacks.py` | Event wiring and 400 ms debounce |
-| `schema.py` | Fields, defaults, and validation |
-| `api.py` | Dashboard adapter for local inference; preserves input order |
-| `model_pkg.inference` | Feature engineering and XGBoost predictions |
+| `schema.py` | Shared profile fields and validation for the form and CSV |
+| `api.py` | Dashboard prediction adapter pending HTTP integration |
+| `api.app.service` | Profile scoring and prediction formatting |
 | `batch.py` | Upload parsing, row errors, summaries, and filtering |
 | `figures.py` | Probability histogram |
 | `sample_customers.csv` | Fictional sample profiles |

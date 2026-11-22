@@ -15,6 +15,8 @@ COPY tablero/requirements.txt ./tablero/requirements.txt
 RUN python -m pip install --only-binary=:all: /tmp/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt \
     && rm /tmp/cdt_model_pkg-0.1.0-py3-none-any.whl
 
+COPY api/__init__.py ./api/
+COPY api/app/__init__.py api/app/profiles.py api/app/service.py ./api/app/
 COPY tablero/ ./tablero/
 
 EXPOSE 8050
