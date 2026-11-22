@@ -1,6 +1,6 @@
 # Model inference package
 
-`cdt-model-pkg` provides local Python inference for CDT customer prioritization. It bundles the trained XGBoost classifier, fitted scikit-learn preprocessor, and inference metadata in `src/model_pkg/trained/`. Keep the three files from the same model export when updating the package. The current classification threshold is 0.20.
+`cdt-model-pkg` provides local Python inference for CDT customer prioritization. It bundles the trained XGBoost classifier, fitted scikit-learn preprocessor, and inference metadata in `src/model_pkg/trained/`. The original inference artifacts live in `models/`. When updating the package, copy all three files from the same model export into `src/model_pkg/trained/`. The current classification threshold is 0.20.
 
 ## Build the wheel
 

@@ -8,7 +8,7 @@ Academic project using the [UCI Bank Marketing dataset](https://archive.ics.uci.
 | --- | --- |
 | `notebooks/` | Exploration, feature engineering, model comparison, and MLflow experiments |
 | `data/` | Source dataset tracked with DVC |
-| `models/` | Earlier models and experiment metadata |
+| `models/` | Trained models, inference artifacts, and experiment metadata |
 | [`model_pkg/`](model_pkg/README.md) | XGBoost inference package and trained artifacts |
 | `api/model_pkg/` | Built inference wheel |
 | [`tablero/`](tablero/README.md) | Dash dashboard, assets, and dashboard Docker configuration |
