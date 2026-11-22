@@ -8,8 +8,9 @@ Academic project using the [UCI Bank Marketing dataset](https://archive.ics.uci.
 | --- | --- |
 | `notebooks/` | Exploration, feature engineering, model comparison, and MLflow experiments |
 | `data/` | Source dataset tracked with DVC |
-| `models/` | Trained models and inference artifacts |
-| [`api/`](api/README.md) | Local XGBoost inference and feature engineering |
+| `models/` | Trained models, inference artifacts, and experiment metadata |
+| [`model_pkg/`](model_pkg/README.md) | XGBoost inference package and trained artifacts |
+| `api/model_pkg/` | Built inference wheel |
 | [`tablero/`](tablero/README.md) | Dash dashboard, assets, and dashboard Docker configuration |
 | `docs/`, `evidencias/` | Report figures and experiment evidence |
 | `requirements.txt` | Notebook and model-development dependencies only |
@@ -32,20 +33,18 @@ The DVC remote uses Google Drive and may require access and authentication. If t
 
 ## Dashboard environment
 
-The dashboard uses `models/xgboost_final.ubj`, `models/preprocessor_final.joblib`, and `models/inference_metadata.json`. Earlier model files remain available for the modeling work but are not used by the dashboard.
+The dashboard uses the installed `cdt-model-pkg` package for local XGBoost inference.
 
 From the repository root, with Python 3.12. On macOS, install OpenMP first with `brew install libomp`:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r api/requirements.txt -r tablero/requirements.txt
+python -m pip install api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt
 python -m tablero.app
 ```
 
 Use a separate virtual environment from notebook development. Open http://127.0.0.1:8050.
-
-The two application requirements files are independent lists. The current dashboard calls `api` in the same Python process, so running it still requires both lists. A separate HTTP API and API Docker image are not implemented.
 
 For the dashboard container, run from the repository root:
 

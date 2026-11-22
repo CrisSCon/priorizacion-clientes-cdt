@@ -9,7 +9,7 @@ From the repository root, with Python 3.12:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r api/requirements.txt -r tablero/requirements.txt
+python -m pip install api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt
 python -m tablero.app
 ```
 
@@ -17,17 +17,17 @@ On macOS, install the XGBoost OpenMP prerequisite with `brew install libomp`. Th
 
 Open http://127.0.0.1:8050. Stop the server with `Ctrl+C`. No environment variables or external services are required by the application.
 
-The dashboard calls [`api/inference.py`](../api/inference.py) locally. Both dependency lists are needed until inference is exposed as a separate service. `tablero/requirements.txt` contains dashboard dependencies only and does not include another requirements file.
+The dashboard calls the installed [`model_pkg.inference`](../model_pkg/src/model_pkg/inference.py) module in the same Python process.
 
 ## Model
 
-The current model is XGBoost. Inference requires these files in `models/`:
+The XGBoost inference package bundles these files:
 
 - `xgboost_final.ubj`
 - `preprocessor_final.joblib`
 - `inference_metadata.json`
 
-Classification uses the metadata threshold, currently 20%. The chart also displays a 20% threshold marker; update it if the model threshold changes. The legacy Gradient Boosting preprocessing files are no longer used.
+Classification uses the metadata threshold, currently 20%. The chart also displays a 20% threshold marker; update it if the model threshold changes.
 
 ## Features and CSV format
 
@@ -46,14 +46,20 @@ Uploads must be UTF-8 CSV (an optional BOM is accepted), no larger than 5 MiB an
 
 ## Docker
 
-Build from the repository root so Docker can access `api/`, `tablero/`, and the three inference artifacts:
+Build from the repository root so Docker can access the wheel in `api/model_pkg/` and the dashboard:
 
 ```bash
 docker build -f tablero/Dockerfile -t cdt-dashboard .
 docker run --rm -p 127.0.0.1:8050:8050 cdt-dashboard
 ```
 
-`Dockerfile.dockerignore` is the Dockerfile-specific ignore file for this build. The image installs both independent application requirements lists because inference is still local. It runs `tablero.wsgi:server` with Gunicorn on port 8050, one worker, four threads, and a 120-second timeout. No API image is defined.
+`Dockerfile.dockerignore` is the Dockerfile-specific ignore file for this build. The image installs the inference wheel and dashboard dependencies. It runs `tablero.wsgi:server` with Gunicorn on port 8050, one worker, four threads, and a 120-second timeout.
+
+To run a prediction inside the image:
+
+```bash
+docker run --rm cdt-dashboard python -c "import pandas as pd; from model_pkg.inference import predict_dataframe; print(predict_dataframe(pd.read_csv('tablero/sample_customers.csv')).head())"
+```
 
 ## Modules
 
@@ -65,7 +71,7 @@ docker run --rm -p 127.0.0.1:8050:8050 cdt-dashboard
 | `callbacks.py` | Event wiring and 400 ms debounce |
 | `schema.py` | Fields, defaults, and validation |
 | `api.py` | Dashboard adapter for local inference; preserves input order |
-| `../api/inference.py` | Feature engineering and XGBoost predictions |
+| `model_pkg.inference` | Feature engineering and XGBoost predictions |
 | `batch.py` | Upload parsing, row errors, summaries, and filtering |
 | `figures.py` | Probability histogram |
 | `sample_customers.csv` | Fictional sample profiles |
