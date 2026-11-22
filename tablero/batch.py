@@ -8,17 +8,17 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Sequence
 
-from tablero import api
-from tablero.schema import (
+from common.predictions import MAX_BATCH_SIZE
+from common.profiles import (
     CSV_COLUMNS,
     DEFAULT_PROFILE,
     FEATURE_KEYS,
     ValidationError,
     validate_profile,
 )
+from tablero import api_connection
 
 MAX_BYTES = 5 * 1024 * 1024
-MAX_ROWS = 10000
 
 
 def sample_csv() -> str:
@@ -90,8 +90,8 @@ def process_csv(text: str) -> list[dict[str, Any]]:
         valid_profiles = []
         valid_indices = []
         for index, values in enumerate(reader):
-            if index >= MAX_ROWS:
-                raise ValidationError("Upload no more than 10,000 data rows.")
+            if index >= MAX_BATCH_SIZE:
+                raise ValidationError(f"Upload no more than {MAX_BATCH_SIZE:,} data rows.")
             original = dict(zip(CSV_COLUMNS, values))
             row = {
                 "id": str(index + 1),
@@ -127,7 +127,7 @@ def process_csv(text: str) -> list[dict[str, Any]]:
         ) from exc
     if not results:
         raise ValidationError("The CSV has a header but no customer rows.")
-    for index, prediction in zip(valid_indices, api.predict_many(valid_profiles)):
+    for index, prediction in zip(valid_indices, api_connection.predict_many(valid_profiles)):
         results[index].update(asdict(prediction))
     return results
 

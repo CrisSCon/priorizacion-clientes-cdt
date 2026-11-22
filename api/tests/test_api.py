@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from api.app import service
 from api.app.main import app
-from api.app.profiles import DEFAULT_PROFILE
+from common.profiles import DEFAULT_PROFILE
 
 
 client = TestClient(app)

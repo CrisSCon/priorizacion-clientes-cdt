@@ -13,6 +13,7 @@ Academic project using the [UCI Bank Marketing dataset](https://archive.ics.uci.
 | [`api/`](api/README.md) | FastAPI prediction service and Docker configuration |
 | `api/model_pkg/` | Built inference wheel |
 | [`tablero/`](tablero/README.md) | Dash dashboard, assets, and dashboard Docker configuration |
+| `common/` | Customer profile validation and prediction contract used by both services |
 | `docs/`, `evidencias/` | Report figures and experiment evidence |
 | `requirements.txt` | Notebook and model-development dependencies only |
 
@@ -38,24 +39,28 @@ The FastAPI service exposes health and batch prediction endpoints on port 8001. 
 
 ## Dashboard environment
 
-The dashboard delegates to the prediction service in the same process while its HTTP integration is pending.
+The dashboard sends predictions to the FastAPI service at `http://localhost:8001` by default.
 
-From the repository root, with Python 3.12. On macOS, install OpenMP first with `brew install libomp`:
+Start the [prediction API](api/README.md) in a separate terminal. From the repository root, with Python 3.12:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt
+python -m pip install -r tablero/requirements.txt
 python -m tablero.app
 ```
 
 Use a separate virtual environment from notebook development. Open http://127.0.0.1:8050.
 
-For the dashboard container, run from the repository root:
+## Deploy to AWS
+
+Each image uses its service directory and `common/` as build contexts. Run these commands from the repository root with BuildKit enabled:
 
 ```bash
-docker build -f tablero/Dockerfile -t cdt-dashboard .
-docker run --rm -p 127.0.0.1:8050:8050 cdt-dashboard
+docker build --build-context common=./common -f api/Dockerfile -t cdt-prediction-api api
+docker build --build-context common=./common -f tablero/Dockerfile -t cdt-dashboard tablero
 ```
 
-See the [dashboard guide](tablero/README.md) for CSV input, model artifacts, and runtime details.
+Deploy the API and dashboard as separate services on ports `8001` and `8050`. Set `API_URL` on the dashboard service to the API's reachable hostname, without `http://` or a port. Set `API_PORT=8001` for a direct connection to the API. Allow the dashboard service to reach the API over the network.
+
+See the [dashboard guide](tablero/README.md) for CSV input and a local Docker example.

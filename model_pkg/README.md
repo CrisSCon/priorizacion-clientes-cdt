@@ -35,4 +35,4 @@ predictions = predict_dataframe(profiles)
 
 Supply `age`, `job`, `marital`, `education`, `default`, `balance`, `housing`, `loan`, `pdays`, `previous`, and `poutcome`. An optional `name` column supplies identifiers. Otherwise, inference uses the input index.
 
-`predict_dataframe` returns `name`, `probability`, `prediction` (0 or 1), and `rank`, sorted by descending probability. Ties retain input order. The dashboard additionally validates input and restores CSV row order through `tablero/api.py`.
+`predict_dataframe` returns `name`, `probability`, `prediction` (0 or 1), and `rank`, sorted by descending probability. Ties retain input order. The [prediction API](../api/README.md) validates customer profiles and returns results in input order.

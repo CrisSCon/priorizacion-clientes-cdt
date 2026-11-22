@@ -4,30 +4,23 @@ Dash/Plotly dashboard for manual customer predictions and CSV batch prioritizati
 
 ## Run locally
 
-From the repository root, with Python 3.12:
+Start the [prediction API](../api/README.md) in a separate terminal. From the repository root, with Python 3.12:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt
+python -m pip install -r tablero/requirements.txt
 python -m tablero.app
 ```
 
-On macOS, install the XGBoost OpenMP prerequisite with `brew install libomp`. The Docker image installs the Linux equivalent.
+Open http://127.0.0.1:8050. The dashboard uses `POST /api/v1/predict` for single and batch scoring.
 
-Open http://127.0.0.1:8050. Stop the server with `Ctrl+C`. No environment variables or external services are required by the application.
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `API_URL` | `localhost` | API hostname |
+| `API_PORT` | `8001` | API HTTP port |
 
-The dashboard delegates to the [API prediction service](../api/app/service.py) in the same Python process. The adapter in `api.py` has TODOs for switching to the running HTTP API.
-
-## Model
-
-The XGBoost inference package bundles these files:
-
-- `xgboost_final.ubj`
-- `preprocessor_final.joblib`
-- `inference_metadata.json`
-
-Classification uses the metadata threshold, currently 20%. The chart also displays a 20% threshold marker; update it if the model threshold changes.
+The API applies the model's classification threshold, currently 20%. Update the dashboard chart marker if that threshold changes.
 
 ## Features and CSV format
 
@@ -42,23 +35,34 @@ Use the downloaded template without changing its headers:
 name,age,job,marital,education,default,balance,housing,loan,pdays,previous,poutcome
 ```
 
-Uploads must be UTF-8 CSV (an optional BOM is accepted), no larger than 5 MiB and no more than 10,000 data rows. Header names and column order must match the template exactly. `schema.py` defines allowed categories and numeric ranges. Invalid rows are shown with errors; valid rows are scored together. `name` is used for display, not as a model feature.
+Uploads must be UTF-8 CSV (an optional BOM is accepted), no larger than 5 MiB and no more than 10,000 data rows. Header names and column order must match the template exactly. `common/profiles.py` defines allowed categories and numeric ranges. Invalid rows are shown with errors; valid rows are scored together. `name` is used for display, not as a model feature.
 
 ## Docker
 
-Build from the repository root so Docker can access the wheel, the prediction service, and the dashboard:
+Build the images with BuildKit and run the two containers on a local Docker network from the repository root:
 
 ```bash
-docker build -f tablero/Dockerfile -t cdt-dashboard .
-docker run --rm -p 127.0.0.1:8050:8050 cdt-dashboard
+docker build --build-context common=./common -f api/Dockerfile -t cdt-prediction-api api
+docker build --build-context common=./common -f tablero/Dockerfile -t cdt-dashboard tablero
+docker network create cdt-local
+docker run --rm -d --name cdt-prediction-api --network cdt-local -p 127.0.0.1:8001:8001 cdt-prediction-api
+docker run --rm -d --name cdt-dashboard --network cdt-local -e API_URL=cdt-prediction-api -e API_PORT=8001 -p 127.0.0.1:8050:8050 cdt-dashboard
 ```
 
-`Dockerfile.dockerignore` is the Dockerfile-specific ignore file for this build. The image installs the inference wheel and dashboard dependencies and copies the prediction service for in-process use. It runs `tablero.wsgi:server` with Gunicorn on port 8050, one worker, four threads, and a 120-second timeout.
+Open the dashboard at <http://127.0.0.1:8050> and the API docs at <http://127.0.0.1:8001/docs>. Stop the containers with `docker stop cdt-dashboard cdt-prediction-api`.
 
-To run a prediction inside the image:
+In AWS, set the dashboard's `API_URL` to the API service hostname reachable from the dashboard, without a scheme or port, and set `API_PORT=8001` for a direct connection. The `localhost` default refers to the dashboard container itself.
+
+The dashboard image builds from `tablero/` and `common/` and runs Gunicorn on port 8050 with one worker, four threads, and a 120-second timeout. It connects to the API over HTTP using `API_URL` and `API_PORT`.
+
+The dashboard and API use `common/` for profile validation and the prediction result format.
+
+## Tests
+
+From the repository root with the dashboard dependencies installed:
 
 ```bash
-docker run --rm cdt-dashboard python -c "from tablero.api import predict_one; from tablero.schema import DEFAULT_PROFILE; print(predict_one(DEFAULT_PROFILE))"
+python -B -m unittest discover -s tablero/tests
 ```
 
 ## Modules
@@ -69,9 +73,8 @@ docker run --rm cdt-dashboard python -c "from tablero.api import predict_one; fr
 | `wsgi.py` | Gunicorn entry point |
 | `ui.py`, `assets/` | Layout, styles, and browser interactions |
 | `callbacks.py` | Event wiring and 400 ms debounce |
-| `schema.py` | Shared profile fields and validation for the form and CSV |
-| `api.py` | Dashboard prediction adapter pending HTTP integration |
-| `api.app.service` | Profile scoring and prediction formatting |
+| `common/profiles.py` | Profile fields and validation for the form and CSV |
+| `api_connection.py` | HTTP client for the prediction API |
 | `batch.py` | Upload parsing, row errors, summaries, and filtering |
 | `figures.py` | Probability histogram |
 | `sample_customers.csv` | Fictional sample profiles |
