@@ -4,20 +4,21 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
-WORKDIR /app
+WORKDIR /app/api
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libgomp1 \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --no-create-home --uid 10001 api-user
 
-COPY requirements.txt model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl /tmp/
-RUN python -m pip install --only-binary=:all: -r /tmp/requirements.txt /tmp/cdt_model_pkg-0.1.0-py3-none-any.whl \
-    && rm /tmp/requirements.txt /tmp/cdt_model_pkg-0.1.0-py3-none-any.whl
+COPY requirements.txt ./
+COPY model_pkg/*.whl ./model_pkg/
+RUN python -m pip install --only-binary=:all: -r requirements.txt
 
-COPY __init__.py ./api/
-COPY app/ ./api/app/
+COPY __init__.py ./
+COPY app/ ./app/
 
+WORKDIR /app
 USER api-user
 EXPOSE 8001
 

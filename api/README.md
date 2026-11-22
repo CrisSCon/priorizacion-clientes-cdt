@@ -7,9 +7,13 @@ FastAPI serves the trained CDT model from the committed wheel. The service valid
 From the repository root with a Python 3.12 virtual environment active:
 
 ```bash
-python -m pip install --only-binary=:all: -r api/requirements.txt api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl
+cd api
+python -m pip install --only-binary=:all: -r requirements.txt
+cd ..
 python -m uvicorn api.app.main:app --host 127.0.0.1 --port 8001
 ```
+
+Run pip from `api/` so it can resolve the relative wheel path in `requirements.txt`.
 
 On Ubuntu install `libgomp1`. On macOS install `libomp` with Homebrew. Open the interactive docs at <http://127.0.0.1:8001/docs>.
 
@@ -22,7 +26,7 @@ docker build -f api/Dockerfile -t cdt-prediction-api api
 docker run --rm -p 127.0.0.1:8001:8001 cdt-prediction-api
 ```
 
-The image installs the model wheel and runs Uvicorn as an unprivileged user.
+The image installs the model wheel and runtime dependencies from `requirements.txt` and runs Uvicorn as an unprivileged user.
 
 ## HTTP contract
 
