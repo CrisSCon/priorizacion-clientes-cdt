@@ -1,28 +1,18 @@
 """Validate profiles and format predictions from the installed model."""
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
 from math import isfinite
-from typing import Any, Literal
+from typing import Any
 
 import pandas as pd
 
-from api.app.profiles import ValidationError, validate_profile
+from common.predictions import Prediction
+from common.profiles import ValidationError, validate_profile
 from model_pkg.inference import predict_dataframe
 
 
 class ModelUnavailableError(RuntimeError):
     """The trained model could not return predictions."""
-
-
-@dataclass(frozen=True)
-class Prediction:
-    """Subscription probabilities, predicted class, and optional batch rank."""
-
-    probability_yes: float
-    probability_no: float
-    prediction: Literal["yes", "no"]
-    rank: int | None = None
 
 
 def _format_prediction(probability: float, prediction: int, rank: int | None) -> Prediction:

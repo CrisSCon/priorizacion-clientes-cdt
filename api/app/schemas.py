@@ -2,8 +2,8 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from api.app.profiles import DEFAULT_PROFILE
-from api.app.service import Prediction
+from common.predictions import MAX_BATCH_SIZE, Prediction
+from common.profiles import DEFAULT_PROFILE
 
 
 type NumericInput = int | float | str
@@ -34,7 +34,7 @@ class PredictionRequest(BaseModel):
 
     inputs: list[ProfileInput] = Field(
         min_length=1,
-        max_length=10_000,
+        max_length=MAX_BATCH_SIZE,
         examples=[[DEFAULT_PROFILE]],
     )
     include_rank: bool = Field(default=True, description="Return ranks within this batch.")

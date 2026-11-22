@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -17,6 +18,7 @@ RUN python -m pip install -r requirements.txt
 
 COPY __init__.py ./
 COPY app/ ./app/
+COPY --from=common /*.py /app/common/
 
 WORKDIR /app
 USER api-user

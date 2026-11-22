@@ -8,16 +8,17 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, RedirectResponse
 
 from api.app import service
-from api.app.profiles import ValidationError
 from api.app.schemas import HealthResponse, PredictionRequest, PredictionResponse
+from common.predictions import API_PREFIX, PREDICT_ROUTE
+from common.profiles import ValidationError
 
 
 app = FastAPI(
     title="CDT Prediction API",
     version="1.0.0",
-    openapi_url="/api/v1/openapi.json",
+    openapi_url=f"{API_PREFIX}/openapi.json",
 )
-router = APIRouter(prefix="/api/v1")
+router = APIRouter(prefix=API_PREFIX)
 logger = logging.getLogger(__name__)
 MODEL_VERSION = version("cdt-model-pkg")
 
@@ -44,7 +45,7 @@ def health() -> HealthResponse:
     return HealthResponse(name=app.title, api_version=app.version, model_version=MODEL_VERSION)
 
 
-@router.post("/predict", responses={503: {"description": "Model unavailable"}})
+@router.post(PREDICT_ROUTE, responses={503: {"description": "Model unavailable"}})
 def predict(request: PredictionRequest) -> PredictionResponse:
     """Score customer profiles and return one prediction per input."""
     try:

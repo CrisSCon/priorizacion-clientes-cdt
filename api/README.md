@@ -19,14 +19,16 @@ On Ubuntu install `libgomp1`. On macOS install `libomp` with Homebrew. Open the 
 
 ## Run in Docker
 
-From the repository root:
+From the repository root with BuildKit enabled:
 
 ```bash
-docker build -f api/Dockerfile -t cdt-prediction-api api
+docker build --build-context common=./common -f api/Dockerfile -t cdt-prediction-api api
 docker run --rm -p 127.0.0.1:8001:8001 cdt-prediction-api
 ```
 
-The image installs the model wheel and runtime dependencies from `requirements.txt` and runs Uvicorn as an unprivileged user.
+The image installs the model wheel and runtime dependencies from `requirements.txt` and runs Uvicorn as an unprivileged user. The build gets shared validation and prediction definitions from the `common/` context.
+
+In AWS, deploy this image as a separate service on port `8001`. Make that port reachable from the dashboard service and use the API service hostname as the dashboard's `API_URL`. See the [dashboard guide](../tablero/README.md) for a local two-container example.
 
 ## HTTP contract
 

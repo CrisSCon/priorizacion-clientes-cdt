@@ -6,9 +6,9 @@ from typing import Any
 import dash_ag_grid as dag
 from dash import dcc, html
 
-from tablero.api import Prediction
+from common.predictions import Prediction
+from common.profiles import FIELDS, Field
 from tablero.figures import probability_distribution
-from tablero.schema import FIELDS, Field
 
 
 def loading_status(label: str) -> html.Div:

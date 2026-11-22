@@ -5,9 +5,9 @@ from typing import Any
 from dash import ALL, Dash, Input, Output, State, ctx, no_update
 from dash.exceptions import PreventUpdate
 
-from tablero import api, batch, ui
+from tablero import api_connection, batch, ui
 from tablero.figures import probability_distribution
-from tablero.schema import DEFAULT_PROFILE, ValidationError
+from common.profiles import DEFAULT_PROFILE, ValidationError
 
 
 def register_callbacks(app: Dash) -> None:
@@ -54,8 +54,8 @@ def register_callbacks(app: Dash) -> None:
     def score_profile(profile: dict[str, Any] | None) -> list[Any]:
         """Update the estimate or show validation errors."""
         try:
-            return ui.prediction_card(api.predict_one(profile or DEFAULT_PROFILE))
-        except (ValidationError, api.ModelUnavailableError) as exc:
+            return ui.prediction_card(api_connection.predict_one(profile or DEFAULT_PROFILE))
+        except (ValidationError, api_connection.ModelUnavailableError) as exc:
             return ui.prediction_card(None, str(exc))
 
     @app.callback(
@@ -100,7 +100,7 @@ def register_callbacks(app: Dash) -> None:
                 "upload-message "
                 + ("warning-message" if summary["errors"] else "success-message"),
             )
-        except (ValidationError, api.ModelUnavailableError) as exc:
+        except (ValidationError, api_connection.ModelUnavailableError) as exc:
             return [], str(exc), "upload-message error-message"
 
     @app.callback(
