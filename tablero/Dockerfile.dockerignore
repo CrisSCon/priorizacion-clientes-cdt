@@ -15,6 +15,7 @@ notebooks/
 data/
 tests/
 .pytest_cache/
+api/.tox/
 
 *.ipynb
 
