@@ -16,5 +16,9 @@ data/
 tests/
 .pytest_cache/
 
-docker/
 *.ipynb
+
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.ruff_cache/

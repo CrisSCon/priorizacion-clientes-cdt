@@ -1,3 +1,5 @@
+# Notebooks, exploration, and model development only.
+# Install api/requirements.txt and tablero/requirements.txt for the application.
 pandas
 numpy
 matplotlib
@@ -7,7 +9,5 @@ requests
 dvc[gdrive]
 scipy
 mlflow==3.18.0
-dash==4.5.0
-dash-ag-grid==33.3.3
-plotly==6.9.0
-pytest>=8,<10
+imbalanced-learn
+xgboost==3.2.0

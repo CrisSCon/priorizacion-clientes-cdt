@@ -1,46 +1,57 @@
-# Priorización de clientes para campañas de depósitos
+# Customer prioritization for term-deposit campaigns
 
-Proyecto académico de despliegue de soluciones analíticas.
+Academic project using the [UCI Bank Marketing dataset](https://archive.ics.uci.edu/dataset/222/bank+marketing) to estimate subscription propensity and prioritize customer contact.
 
-## Objetivo
-Explorar los datos de Bank Marketing y desarrollar un modelo
-de clasificación para apoyar la priorización de clientes.
+## Repository structure
 
-## Dataset
-Fuente oficial: https://archive.ics.uci.edu/dataset/222/bank+marketing
+| Path | Purpose |
+| --- | --- |
+| `notebooks/` | Exploration, feature engineering, model comparison, and MLflow experiments |
+| `data/` | Source dataset tracked with DVC |
+| `models/` | Trained models and inference artifacts |
+| [`api/`](api/README.md) | Local XGBoost inference and feature engineering |
+| [`tablero/`](tablero/README.md) | Dash dashboard, assets, and dashboard Docker configuration |
+| `docs/`, `evidencias/` | Report figures and experiment evidence |
+| `requirements.txt` | Notebook and model-development dependencies only |
 
-## Tecnologías
-- Python
-- Pandas
-- Matplotlib
-- Scikit-learn
-- Git
-- DVC
+## Notebook environment
 
-## Reproducir la exploración
-
-Desde la raíz del repositorio, con Python 3.13 y un entorno virtual activo:
+From the repository root, with Python 3.13:
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -r requirements.txt
 dvc pull
-jupyter notebook notebooks/01_eda_bank_marketing.ipynb
+jupyter notebook
 ```
 
-El remoto DVC es Google Drive y puede requerir acceso y autenticación. Si el CSV no está disponible, el notebook descarga la fuente pública UCI y exige que su MD5 y tamaño coincidan con `data/bank-full.csv.dvc`. No se analiza una versión distinta silenciosamente. En Colab, clonar primero el repositorio y establecer su carpeta como directorio de trabajo.
+Run `notebooks/01_eda_bank_marketing.ipynb` before `notebooks/02_modelado_baseline_reglog.ipynb`. Review notebook paths and MLflow configuration before running all cells.
 
-Reiniciar el kernel y ejecutar todas las celdas. Se comprueban integridad, dimensiones, nulos, categorías unknown, distribución objetivo y duplicados. Las figuras 1 a 4 del informe se exportan a `docs/figuras/`. `duration` se explora históricamente, pero no se usará como predictor antes de la llamada.
+The DVC remote uses Google Drive and may require access and authentication. If the source CSV is unavailable, notebook 01 can download UCI data and validate its size and MD5 against `data/bank-full.csv.dvc`. Exploration figures are exported to `docs/figuras/`. Call duration is not an input to the dashboard's pre-contact predictions.
 
-## Local dashboard
+## Dashboard environment
 
-The Dash dashboard in [`tablero/`](tablero/README.md) uses only
-`models/gradient_boosting_final.pkl`. It supports manual profiles with live
-probabilities and CSV uploads with validation, filtering, ranking, and row details.
+The dashboard uses `models/xgboost_final.ubj`, `models/preprocessor_final.joblib`, and `models/inference_metadata.json`. Earlier model files remain available for the modeling work but are not used by the dashboard.
+
+From the repository root, with Python 3.12. On macOS, install OpenMP first with `brew install libomp`:
 
 ```bash
-python -m pip install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r api/requirements.txt -r tablero/requirements.txt
 python -m tablero.app
 ```
 
-Open http://127.0.0.1:8050. See the [dashboard guide](tablero/README.md) for model
-retrieval, the exact CSV contract, preprocessing provenance, and tests.
+Use a separate virtual environment from notebook development. Open http://127.0.0.1:8050.
+
+The two application requirements files are independent lists. The current dashboard calls `api` in the same Python process, so running it still requires both lists. A separate HTTP API and API Docker image are not implemented.
+
+For the dashboard container, run from the repository root:
+
+```bash
+docker build -f tablero/Dockerfile -t cdt-dashboard .
+docker run --rm -p 127.0.0.1:8050:8050 cdt-dashboard
+```
+
+See the [dashboard guide](tablero/README.md) for CSV input, model artifacts, and runtime details.
