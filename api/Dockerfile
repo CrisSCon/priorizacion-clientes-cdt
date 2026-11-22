@@ -13,7 +13,7 @@ RUN apt-get update \
 
 COPY requirements.txt ./
 COPY model_pkg/*.whl ./model_pkg/
-RUN python -m pip install --only-binary=:all: -r requirements.txt
+RUN python -m pip install -r requirements.txt
 
 COPY __init__.py ./
 COPY app/ ./app/

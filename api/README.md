@@ -8,7 +8,7 @@ From the repository root with a Python 3.12 virtual environment active:
 
 ```bash
 cd api
-python -m pip install --only-binary=:all: -r requirements.txt
+python -m pip install -r requirements.txt
 cd ..
 python -m uvicorn api.app.main:app --host 127.0.0.1 --port 8001
 ```
