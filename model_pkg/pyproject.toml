@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cdt-model-pkg"
+version = "0.1.0"
+description = "Customer prioritization for term-deposit campaigns"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "xgboost==3.2.0",
+    "numpy==2.4.6",
+    "scipy==1.17.1",
+    "pandas==3.1.1",
+    "scikit-learn==1.9.1",
+    "joblib==1.6.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["model_pkg"]
+namespaces = false
+
+[tool.setuptools.package-data]
+model_pkg = [
+    "trained/xgboost_final.ubj",
+    "trained/preprocessor_final.joblib",
+    "trained/inference_metadata.json",
+]

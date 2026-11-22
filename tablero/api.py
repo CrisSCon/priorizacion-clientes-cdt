@@ -7,7 +7,7 @@ from typing import Any, Mapping, Sequence
 import numpy as np
 import pandas as pd
 
-from api import inference
+from model_pkg import inference
 from tablero.schema import validate_profile
 
 
@@ -33,7 +33,7 @@ def load_artifacts():
     except Exception as exc:
         raise ModelUnavailableError(
             "The final XGBoost model or its preprocessing artifacts "
-            "could not be loaded. Check the files in models/."
+            "could not be loaded. Check the installed cdt-model-pkg package."
         ) from exc
 
 

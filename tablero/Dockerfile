@@ -10,13 +10,11 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY api/requirements.txt ./api/requirements.txt
+COPY model_pkg/ ./model_pkg/
 COPY tablero/requirements.txt ./tablero/requirements.txt
-RUN pip install --no-cache-dir -r api/requirements.txt -r tablero/requirements.txt
+RUN python -m pip install --no-cache-dir ./model_pkg -r tablero/requirements.txt
 
-COPY api/ ./api/
 COPY tablero/ ./tablero/
-COPY models/xgboost_final.ubj models/preprocessor_final.joblib models/inference_metadata.json ./models/
 
 EXPOSE 8050
 

@@ -7,10 +7,10 @@ import pandas as pd
 import xgboost as xgb
 
 
-ROOT = Path(__file__).resolve().parents[1]
-MODEL_PATH = ROOT / "models" / "xgboost_final.ubj"
-PREPROCESSOR_PATH = ROOT / "models" / "preprocessor_final.joblib"
-METADATA_PATH = ROOT / "models" / "inference_metadata.json"
+TRAINED_DIR = Path(__file__).resolve().parent / "trained"
+MODEL_PATH = TRAINED_DIR / "xgboost_final.ubj"
+PREPROCESSOR_PATH = TRAINED_DIR / "preprocessor_final.joblib"
+METADATA_PATH = TRAINED_DIR / "inference_metadata.json"
 
 REQUIRED_COLUMNS = [
     "age", "job", "marital", "education", "default",

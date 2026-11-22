@@ -1,5 +1,5 @@
 # Notebooks, exploration, and model development only.
-# Install api/requirements.txt and tablero/requirements.txt for the application.
+# See tablero/README.md for the application environment.
 pandas
 numpy
 matplotlib
