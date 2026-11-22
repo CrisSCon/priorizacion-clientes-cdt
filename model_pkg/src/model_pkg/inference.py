@@ -1,5 +1,5 @@
-from pathlib import Path
 import json
+from importlib.resources import as_file, files
 
 import joblib
 import numpy as np
@@ -7,7 +7,7 @@ import pandas as pd
 import xgboost as xgb
 
 
-TRAINED_DIR = Path(__file__).resolve().parent / "trained"
+TRAINED_DIR = files(__package__).joinpath("trained")
 MODEL_PATH = TRAINED_DIR / "xgboost_final.ubj"
 PREPROCESSOR_PATH = TRAINED_DIR / "preprocessor_final.joblib"
 METADATA_PATH = TRAINED_DIR / "inference_metadata.json"
@@ -19,12 +19,15 @@ REQUIRED_COLUMNS = [
 
 
 def load_artifacts():
-    with open(METADATA_PATH, encoding="utf-8") as file:
+    with METADATA_PATH.open(encoding="utf-8") as file:
         metadata = json.load(file)
 
-    preprocessor = joblib.load(PREPROCESSOR_PATH)
+    with PREPROCESSOR_PATH.open("rb") as file:
+        preprocessor = joblib.load(file)
+
     model = xgb.XGBClassifier()
-    model.load_model(MODEL_PATH)
+    with as_file(MODEL_PATH) as model_path:
+        model.load_model(model_path)
 
     return model, preprocessor, metadata
 
