@@ -9,7 +9,7 @@ From the repository root, with Python 3.12:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install ./model_pkg -r tablero/requirements.txt
+python -m pip install api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt
 python -m tablero.app
 ```
 
@@ -46,14 +46,20 @@ Uploads must be UTF-8 CSV (an optional BOM is accepted), no larger than 5 MiB an
 
 ## Docker
 
-Build from the repository root so Docker can access the inference package and dashboard:
+Build from the repository root so Docker can access the wheel in `api/model_pkg/` and the dashboard:
 
 ```bash
 docker build -f tablero/Dockerfile -t cdt-dashboard .
 docker run --rm -p 127.0.0.1:8050:8050 cdt-dashboard
 ```
 
-`Dockerfile.dockerignore` is the Dockerfile-specific ignore file for this build. The image installs the inference package and dashboard dependencies. It runs `tablero.wsgi:server` with Gunicorn on port 8050, one worker, four threads, and a 120-second timeout.
+`Dockerfile.dockerignore` is the Dockerfile-specific ignore file for this build. The image installs the inference wheel and dashboard dependencies. It runs `tablero.wsgi:server` with Gunicorn on port 8050, one worker, four threads, and a 120-second timeout.
+
+To run a prediction inside the image:
+
+```bash
+docker run --rm cdt-dashboard python -c "import pandas as pd; from model_pkg.inference import predict_dataframe; print(predict_dataframe(pd.read_csv('tablero/sample_customers.csv')).head())"
+```
 
 ## Modules
 

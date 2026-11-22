@@ -10,6 +10,7 @@ Academic project using the [UCI Bank Marketing dataset](https://archive.ics.uci.
 | `data/` | Source dataset tracked with DVC |
 | `models/` | Earlier models and experiment metadata |
 | [`model_pkg/`](model_pkg/README.md) | XGBoost inference package and trained artifacts |
+| `api/model_pkg/` | Built inference wheel |
 | [`tablero/`](tablero/README.md) | Dash dashboard, assets, and dashboard Docker configuration |
 | `docs/`, `evidencias/` | Report figures and experiment evidence |
 | `requirements.txt` | Notebook and model-development dependencies only |
@@ -39,7 +40,7 @@ From the repository root, with Python 3.12. On macOS, install OpenMP first with 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install ./model_pkg -r tablero/requirements.txt
+python -m pip install api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt
 python -m tablero.app
 ```
 

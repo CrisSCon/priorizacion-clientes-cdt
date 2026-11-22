@@ -10,9 +10,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY model_pkg/ ./model_pkg/
+COPY api/model_pkg/cdt_model_pkg-0.1.0-py3-none-any.whl /tmp/
 COPY tablero/requirements.txt ./tablero/requirements.txt
-RUN python -m pip install --no-cache-dir ./model_pkg -r tablero/requirements.txt
+RUN python -m pip install --only-binary=:all: /tmp/cdt_model_pkg-0.1.0-py3-none-any.whl -r tablero/requirements.txt \
+    && rm /tmp/cdt_model_pkg-0.1.0-py3-none-any.whl
 
 COPY tablero/ ./tablero/
 
