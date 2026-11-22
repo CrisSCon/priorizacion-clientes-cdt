@@ -52,7 +52,7 @@ python -m tablero.app
 
 Use a separate virtual environment from notebook development. Open http://127.0.0.1:8050.
 
-## Deploy to AWS
+## Deployment to AWS
 
 Each image uses its service directory and `common/` as build contexts. Run these commands from the repository root with BuildKit enabled:
 
