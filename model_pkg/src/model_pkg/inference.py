@@ -1,6 +1,7 @@
 """Score and rank customers with the trained CDT model."""
 
 import json
+from functools import cache
 from importlib.resources import as_file, files
 from typing import TypedDict
 
@@ -32,8 +33,9 @@ class _InferenceMetadata(TypedDict):
     threshold: float
 
 
+@cache
 def _load_artifacts() -> tuple[xgb.XGBClassifier, ColumnTransformer, _InferenceMetadata]:
-    """Load the bundled model, preprocessor, and metadata."""
+    """Load and cache the bundled model, preprocessor, and metadata."""
     with METADATA_PATH.open(encoding="utf-8") as file:
         metadata: _InferenceMetadata = json.load(file)
 
