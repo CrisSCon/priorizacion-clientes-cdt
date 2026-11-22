@@ -1,10 +1,14 @@
+"""Score and rank customers with the trained CDT model."""
+
 import json
 from importlib.resources import as_file, files
+from typing import TypedDict
 
 import joblib
 import numpy as np
 import pandas as pd
 import xgboost as xgb
+from sklearn.compose import ColumnTransformer
 
 
 TRAINED_DIR = files(__package__).joinpath("trained")
@@ -18,12 +22,23 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def load_artifacts():
+class _InferenceMetadata(TypedDict):
+    """Metadata used during inference."""
+
+    balance_median_train: float
+    numeric_features: list[str]
+    categorical_features: list[str]
+    feature_names: list[str]
+    threshold: float
+
+
+def _load_artifacts() -> tuple[xgb.XGBClassifier, ColumnTransformer, _InferenceMetadata]:
+    """Load the bundled model, preprocessor, and metadata."""
     with METADATA_PATH.open(encoding="utf-8") as file:
-        metadata = json.load(file)
+        metadata: _InferenceMetadata = json.load(file)
 
     with PREPROCESSOR_PATH.open("rb") as file:
-        preprocessor = joblib.load(file)
+        preprocessor: ColumnTransformer = joblib.load(file)
 
     model = xgb.XGBClassifier()
     with as_file(MODEL_PATH) as model_path:
@@ -32,7 +47,8 @@ def load_artifacts():
     return model, preprocessor, metadata
 
 
-def build_features(raw, balance_median=451.0):
+def _build_features(raw: pd.DataFrame, balance_median: float = 451.0) -> pd.DataFrame:
+    """Derive the features expected by the preprocessor."""
     missing = [c for c in REQUIRED_COLUMNS if c not in raw.columns]
     if missing:
         raise ValueError(f"Faltan columnas obligatorias: {missing}")
@@ -164,8 +180,15 @@ def build_features(raw, balance_median=451.0):
     return df
 
 
-def predict_dataframe(raw):
-    model, preprocessor, metadata = load_artifacts()
+def predict_dataframe(raw: pd.DataFrame) -> pd.DataFrame:
+    """Score one row per customer and return a DataFrame ordered by rank.
+
+    Columns are `name` (input name or stringified index), `probability`
+    (subscription probability from 0 to 1), `prediction` (1 at or above
+    the model threshold, otherwise 0), and `rank` (1 for the highest
+    probability). Ties retain input order. The output has a fresh index.
+    """
+    model, preprocessor, metadata = _load_artifacts()
 
     identifiers = (
         raw["name"].reset_index(drop=True)
@@ -173,7 +196,7 @@ def predict_dataframe(raw):
         else pd.Series(raw.index.astype(str), name="name")
     )
 
-    features = build_features(raw, metadata['balance_median_train'])
+    features = _build_features(raw, metadata["balance_median_train"])
 
     numeric = metadata["numeric_features"]
     categorical = metadata["categorical_features"]

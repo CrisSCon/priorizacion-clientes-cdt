@@ -1,7 +1,6 @@
 """Connect dashboard predictions to the final XGBoost inference engine."""
 
 from dataclasses import dataclass
-from functools import lru_cache
 from typing import Any, Mapping, Sequence
 
 import numpy as np
@@ -25,31 +24,19 @@ class Prediction:
     rank: int | None = None
 
 
-@lru_cache(maxsize=1)
-def load_artifacts():
-    """Load and cache the final model, preprocessor, and metadata."""
-    try:
-        return inference.load_artifacts()
-    except Exception as exc:
-        raise ModelUnavailableError(
-            "The final XGBoost model or its preprocessing artifacts "
-            "could not be loaded. Check the installed cdt-model-pkg package."
-        ) from exc
-
-
-def classify_probability(
+def _format_prediction(
     probability_yes: float,
-    threshold: float,
-    rank: int | None = None,
+    prediction: int,
+    rank: int,
 ) -> Prediction:
-    """Convert a probability into the dashboard prediction format."""
+    """Convert a model result into the dashboard format."""
     if not np.isfinite(probability_yes) or not 0 <= probability_yes <= 1:
         raise ValueError("Probability must be finite and between zero and one.")
 
     return Prediction(
         probability_yes=float(probability_yes),
         probability_no=float(1 - probability_yes),
-        prediction="yes" if probability_yes >= threshold else "no",
+        prediction="yes" if prediction == 1 else "no",
         rank=rank,
     )
 
@@ -62,8 +49,6 @@ def predict_many(
         return []
 
     validated = [validate_profile(profile) for profile in profiles]
-    _, _, metadata = load_artifacts()
-    threshold = float(metadata["threshold"])
 
     # Temporary unique identifiers allow restoring the original CSV order
     # after the inference engine sorts customers by descending probability.
@@ -84,9 +69,9 @@ def predict_many(
     for identifier in identifiers:
         result = by_identifier[identifier]
         predictions.append(
-            classify_probability(
+            _format_prediction(
                 float(result["probability"]),
-                threshold,
+                int(result["prediction"]),
                 int(result["rank"]),
             )
         )
