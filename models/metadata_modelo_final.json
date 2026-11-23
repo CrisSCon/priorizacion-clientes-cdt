@@ -1,0 +1,14 @@
+{
+    "modelo_seleccionado": "xgboost_sin_balanceo",
+    "umbral_final": 0.2,
+    "criterio_seleccion": "Lift@10 medio en validacion agrupada; desempate PR-AUC",
+    "registros_train": 36168,
+    "registros_test": 9043,
+    "numero_variables": 94,
+    "validacion": "StratifiedGroupKFold",
+    "n_splits": 5,
+    "mlflow_experiment": "bank-marketing-modelamiento-integral",
+    "mlflow_run_id": "6844cd5b26064dbc899545d7ebd55438",
+    "nota_test": "El conjunto test tuvo exposicion historica en evaluaciones previas; no se considera completamente inedito.",
+    "nota_despliegue": "El modelo se entrenó con matrices ya transformadas. Para inferencia desde datos crudos se debe integrar el preprocesamiento del EDA y respetar exactamente las 94/95 columnas y su orden."
+}
